@@ -1,6 +1,6 @@
-package com.beije.account_service_be.business.system_global.exception;
+package com.beije.account_service_be.system_global.exception;
 
-import com.beije.account_service_be.business.system_global.domain.dto.response.InvalidResponseDto;
+import com.beije.account_service_be.system_global.domain.dto.response.InvalidResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintDeclarationException;
 import jakarta.validation.constraints.NotNull;

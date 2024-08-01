@@ -1,9 +1,8 @@
 package com.beije.account_service_be.business.authentication.domain.dto.request;
 
-import com.beije.account_service_be.business.system_global.domain.dto.BaseDto;
+import com.beije.account_service_be.system_global.domain.dto.BaseDto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +22,7 @@ public record UserRequestDto(
         String email,
 
         @NotBlank(message="Required field: password")
+
         String password
 ) implements BaseDto {
 }

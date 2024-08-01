@@ -28,6 +28,12 @@ dependencies {
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'io.springfox:springfox-swagger-ui:3.0.0'
 
+    // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // Monitoring
+    // Spring actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

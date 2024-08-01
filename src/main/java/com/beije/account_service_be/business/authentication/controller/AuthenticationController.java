@@ -2,7 +2,7 @@ package com.beije.account_service_be.business.authentication.controller;
 
 import com.beije.account_service_be.business.authentication.domain.dto.request.UserRequestDto;
 import com.beije.account_service_be.business.authentication.service.AuthenticationService;
-import com.beije.account_service_be.business.system_global.domain.dto.BaseDto;
+import com.beije.account_service_be.system_global.domain.dto.BaseDto;
 import io.swagger.annotations.ApiOperation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.beije.account_service_be.business.system_global.exception;
+package com.beije.account_service_be.system_global.exception;
 
 import org.springframework.http.HttpStatus;
 
