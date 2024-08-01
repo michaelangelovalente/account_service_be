@@ -23,49 +23,31 @@ public class SecurityConfig {
 
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//
-//        http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .httpBasic(Customizer.withDefaults())
-//                .exceptionHandling(ex -> ex.authenticationEntryPoint(restAuthenticationEntryPoint)) // used to handle authentication errors
-////                .csrf(AbstractHttpConfigurer::disable) // For Postman
-//
-////                .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable()) // For the H2 console
-////                .headers( headers -> headers.frameOptions().disable()) // Allows H2 Console --> deprecated solution
-//
-//                .headers(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests( auth -> auth // manage access
-//                        .requestMatchers("/h2-console/**").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
-////                        .anyRequest().authenticated()
-//                )
-//                .sessionManagement( sessions -> sessions
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // no session
-//                );
-//
-//        return http.build();
-//    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
+                .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(restAuthenticationEntryPoint)) // Handle auth errors
-                .csrf(csrf -> csrf.disable()) // For Postman
-                .headers(headers -> headers.frameOptions().disable()) // For the H2 console
-                .authorizeHttpRequests(auth -> auth  // manage access
-                                .requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
-                                .anyRequest().authenticated()
-                        // other matchers
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(restAuthenticationEntryPoint)) // used to handle authentication errors
+//                .csrf(AbstractHttpConfigurer::disable) // For Postman
+
+//                .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable()) // For the H2 console
+//                .headers( headers -> headers.frameOptions().disable()) // Allows H2 Console --> deprecated solution
+
+                .headers(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests( auth -> auth // manage access
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
+//                        .anyRequest().authenticated()
                 )
-                .sessionManagement(sessions -> sessions
+                .sessionManagement( sessions -> sessions
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // no session
                 );
 
         return http.build();
     }
+  }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
