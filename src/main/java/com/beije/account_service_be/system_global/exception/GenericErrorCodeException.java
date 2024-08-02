@@ -15,20 +15,20 @@ public class GenericErrorCodeException extends RuntimeException {
         this.httpStatus = httpStatus;
     }
 
-    public GenericErrorCodeException(ErrorCodeExceptionEnum codeException, HttpStatus httpStatus) {
-        this(codeException, codeException.getMessage(), httpStatus);
-    }
-
-
-
-    public GenericErrorCodeException(ErrorCodeExceptionEnum codeException, String message) {
-        this(codeException, message, HttpStatus.NOT_ACCEPTABLE);
-    }
-
-    public GenericErrorCodeException(ErrorCodeExceptionEnum codeException) {
-        this(codeException, codeException.getMessage(), codeException.getHttpStatus());
-
-    }
+//    public GenericErrorCodeException(ErrorCodeExceptionEnum codeException, HttpStatus httpStatus) {
+//        this(codeException, codeException.getMessage(), httpStatus);
+//    }
+//
+//
+//
+//    public GenericErrorCodeException(ErrorCodeExceptionEnum codeException, String message) {
+//        this(codeException, message, HttpStatus.NOT_ACCEPTABLE);
+//    }
+//
+//    public GenericErrorCodeException(ErrorCodeExceptionEnum codeException) {
+//        this(codeException, codeException.getMessage(), codeException.getHttpStatus());
+//
+//    }
 
     public GenericErrorCodeException(String validation) {
         super(validation);
