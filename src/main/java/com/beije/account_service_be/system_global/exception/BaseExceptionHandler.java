@@ -4,6 +4,7 @@ import com.beije.account_service_be.system_global.domain.dto.response.InvalidRes
 import io.micrometer.common.lang.NonNullApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -33,7 +34,7 @@ public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandle
 
         var invalidResponseBody = InvalidResponseDto.builder()
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
-                .status(genericException.getHttpStatus()) // 400
+                .status( (long)genericException.getHttpStatus().value()) // 400
                 .error(genericException.getHttpStatus().getReasonPhrase())
                 .path(extractPathFromUri(request))
                 .build();

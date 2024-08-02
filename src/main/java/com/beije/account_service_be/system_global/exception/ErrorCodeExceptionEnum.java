@@ -1,7 +1,9 @@
 package com.beije.account_service_be.system_global.exception;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public enum ErrorCodeExceptionEnum {
 
     ER001("Internal error", HttpStatus.BAD_REQUEST),
@@ -15,24 +17,17 @@ public enum ErrorCodeExceptionEnum {
     ER009("Invalid token", HttpStatus.UNAUTHORIZED),
     ER010("Email already confirmed", HttpStatus.BAD_REQUEST);
 
-    private String message;
-    private HttpStatus httpStatus;
+    private final String message;
+    private final HttpStatus httpStatus;
 
-    private ErrorCodeExceptionEnum(String message) {
-        this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        this.message = message;
-    }
+//    private ErrorCodeExceptionEnum(String message) {
+//        this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+//        this.message = message;
+//    }
 
     private ErrorCodeExceptionEnum(String message, HttpStatus httpStatus) {
         this.message = message;
         this.httpStatus = httpStatus;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public HttpStatus getHttpStatus() {
-        return httpStatus;
-    }
 }

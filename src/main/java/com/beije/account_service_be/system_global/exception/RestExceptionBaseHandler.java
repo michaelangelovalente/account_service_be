@@ -1,9 +1,6 @@
 package com.beije.account_service_be.system_global.exception;
 
 import com.beije.account_service_be.system_global.domain.dto.response.InvalidResponseDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,7 +21,7 @@ public class RestExceptionBaseHandler extends BaseExceptionHandler {
         final InvalidResponseDto baseResponse =  InvalidResponseDto
                 .builder()
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
-                .status(exception.getHttpStatus())
+                .status((long) exception.getHttpStatus().value())
                 .error(exception.getCodeException().name())
                 .path(extractPathFromUri(request))
                 .build();

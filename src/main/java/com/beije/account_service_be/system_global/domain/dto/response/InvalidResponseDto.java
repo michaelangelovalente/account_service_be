@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 @Builder
 public record InvalidResponseDto(
   String timestamp,
-  HttpStatus status,
+  Long status,
   String error,
   String path
 ) implements BaseDto {
