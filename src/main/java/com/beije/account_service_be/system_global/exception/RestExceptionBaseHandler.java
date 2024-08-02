@@ -21,45 +21,41 @@ public class RestExceptionBaseHandler extends BaseExceptionHandler {
         logger.error("handleGenericErrorCodeException", ex);
         GenericErrorCodeException exception = (GenericErrorCodeException) ex;
 
-        var errorCode = ErrorCodeExceptionEnum.ER001;
         final InvalidResponseDto baseResponse =  InvalidResponseDto
                 .builder()
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
-                .status()
-                .error()
-                .path()
+                .status(exception.getHttpStatus())
+                .error(exception.getCodeException().name())
+                .path(extractPathFromUri(request))
                 .build();
-        baseResponse.getResult().setErrorCode(exception.getCodeException().name());
-        baseResponse.getResult().setError(true);
-        baseResponse.getResult().setErrorMessage(ex.getMessage());
         return ResponseEntity.status(exception.getHttpStatus()).body(baseResponse);
     }
 
 
 
-    @ExceptionHandler({ Exception.class })
-    public ResponseEntity<Object> handleDefaultException(Exception ex, WebRequest request) {
-        logger.error("handleDefaultException", ex);
-
-        HttpStatus status = null;
-        BaseResponse baseResponse = null;
-
-        try {
-            String exStr = ex.getMessage();
-            String statusCode = exStr.substring(exStr.lastIndexOf("{\"result\":{\"error\""), exStr.length()-1);
-            baseResponse = new ObjectMapper().readValue(statusCode, BaseResponse.class);
-            status = HttpStatus.BAD_REQUEST;
-        } catch (Exception e) {
-            baseResponse = new BaseResponse();
-            baseResponse.getResult().setErrorCode(ErrorCodeExceptionEnum.ER001.name());
-            baseResponse.getResult().setError(true);
-            baseResponse.getResult().setErrorMessage(ex.getMessage());
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-
-
-        return ResponseEntity.status(status).body(baseResponse);
-    }
+//    @ExceptionHandler({ Exception.class })
+//    public ResponseEntity<Object> handleDefaultException(Exception ex, WebRequest request) {
+//        logger.error("handleDefaultException", ex);
+//
+//        HttpStatus status = null;
+//        BaseResponse baseResponse = null;
+//
+//        try {
+//            String exStr = ex.getMessage();
+//            String statusCode = exStr.substring(exStr.lastIndexOf("{\"result\":{\"error\""), exStr.length()-1);
+//            baseResponse = new ObjectMapper().readValue(statusCode, BaseResponse.class);
+//            status = HttpStatus.BAD_REQUEST;
+//        } catch (Exception e) {
+//            baseResponse = new BaseResponse();
+//            baseResponse.getResult().setErrorCode(ErrorCodeExceptionEnum.ER001.name());
+//            baseResponse.getResult().setError(true);
+//            baseResponse.getResult().setErrorMessage(ex.getMessage());
+//            status = HttpStatus.INTERNAL_SERVER_ERROR;
+//        }
+//
+//
+//        return ResponseEntity.status(status).body(baseResponse);
+//    }
 
 
 }

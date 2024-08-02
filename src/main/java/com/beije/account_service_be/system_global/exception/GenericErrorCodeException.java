@@ -21,9 +21,9 @@ public class GenericErrorCodeException extends RuntimeException {
 //
 //
 //
-//    public GenericErrorCodeException(ErrorCodeExceptionEnum codeException, String message) {
-//        this(codeException, message, HttpStatus.NOT_ACCEPTABLE);
-//    }
+    public GenericErrorCodeException(ErrorCodeExceptionEnum codeException, String message) {
+        this(codeException, message, HttpStatus.NOT_ACCEPTABLE);
+    }
 //
 //    public GenericErrorCodeException(ErrorCodeExceptionEnum codeException) {
 //        this(codeException, codeException.getMessage(), codeException.getHttpStatus());

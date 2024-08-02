@@ -52,7 +52,7 @@ public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandle
             URI uri = new URI(requestUrl);
             path = uri.getPath();
         } catch (URISyntaxException e) {
-            throw new GenericErrorCodeException("Invalid URI PATH " + e.getMessage());
+            throw new GenericErrorCodeException( ErrorCodeExceptionEnum.ER001, "Invalid URI PATH " + e.getMessage());
         }
         return path;
     }
