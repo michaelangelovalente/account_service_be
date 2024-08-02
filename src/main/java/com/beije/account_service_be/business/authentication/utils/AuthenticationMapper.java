@@ -20,6 +20,7 @@ public class AuthenticationMapper {
 
     public UserResponseDto userEntityToUserResponseDto(UserEntity userEntity) {
         return UserResponseDto.builder()
+                .id(userEntity.getId())
                 .name(userEntity.getName())
                 .lastname(userEntity.getLastname())
                 .email(userEntity.getEmail())

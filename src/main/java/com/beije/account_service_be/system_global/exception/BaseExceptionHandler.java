@@ -1,32 +1,62 @@
 package com.beije.account_service_be.system_global.exception;
 
 import com.beije.account_service_be.system_global.domain.dto.response.InvalidResponseDto;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.ConstraintDeclarationException;
-import jakarta.validation.constraints.NotNull;
+import io.micrometer.common.lang.NonNullApi;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 @ControllerAdvice
 @RequiredArgsConstructor
-public class BaseExceptionHandler {
+@NonNullApi
+public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
 
-    @ExceptionHandler({ConstraintDeclarationException.class, MethodArgumentNotValidException.class})
-    public ResponseEntity<InvalidResponseDto> handleValidationException(ConstraintDeclarationException e, @NotNull HttpServletRequest request) {
-        ExceptionCodesEnum badReq = ExceptionCodesEnum.E001;
-        return ResponseEntity.status(badReq.getHttpStatus()).body(
-                InvalidResponseDto.builder()
-                        .error(badReq.getMessage())
-                        .path(request.getRequestURI())
-                        .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
-                        .build()
-        );
+        GenericErrorCodeException genericException = new GenericErrorCodeException(ex.getMessage());
+
+        var invalidResponseBody = InvalidResponseDto.builder()
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
+                .status(genericException.getHttpStatus()) // 400
+                .error(genericException.getHttpStatus().getReasonPhrase())
+                .path(extractPathFromUri(request))
+                .build();
+        return Objects.requireNonNull(handleExceptionInternal(ex, invalidResponseBody, headers, status, request));
     }
+
+
+
+    protected String extractPathFromUri(WebRequest webRequest){
+        String requestUrl = webRequest.getDescription(false);
+
+        requestUrl = requestUrl.replaceFirst("uri=", "");
+
+        String path = null;
+        try {
+            URI uri = new URI(requestUrl);
+            path = uri.getPath();
+        } catch (URISyntaxException e) {
+            throw new GenericErrorCodeException("Invalid URI PATH " + e.getMessage());
+        }
+        return path;
+    }
+
+
+
 }

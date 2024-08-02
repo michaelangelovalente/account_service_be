@@ -2,6 +2,7 @@ package com.beije.account_service_be.business.authentication.service;
 
 import com.beije.account_service_be.business.authentication.domain.SecurityUserAdapter;
 import com.beije.account_service_be.business.authentication.domain.dto.request.UserRequestDto;
+import com.beije.account_service_be.business.authentication.domain.dto.response.UserResponseDto;
 import com.beije.account_service_be.business.authentication.domain.entity.UserEntity;
 import com.beije.account_service_be.business.authentication.repository.UserRepository;
 import com.beije.account_service_be.business.authentication.utils.AuthenticationMapper;
@@ -35,19 +36,20 @@ public class AuthenticationService implements UserDetailsService {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     public BaseDto signup(UserRequestDto userRequestDto) {
-        logger.info("User registration request: {}", userRequestDto);
+        logger.info("User registration requested by: {}", userRequestDto.email());
         if(Objects.isNull(userRequestDto)){
             return null; //TODO:
         }
 
-        Optional<UserEntity> userEntity = userRepository.findByEmail(userRequestDto.email());
+        Optional<UserEntity> userEntity = userRepository.findByEmailCaseInsensitive(userRequestDto.email());
         if( userEntity.isPresent()){
             throw  new UserExistsException();
         }
 
         var validUserEntity = authenticationMapper.userRequestDtoToUserEntity(userRequestDto);
         validUserEntity.setPassword(passwordEncoder.encode(validUserEntity.getPassword()));
-        var registeredUser = authenticationMapper.userEntityToUserResponseDto(
+
+        UserResponseDto registeredUser = authenticationMapper.userEntityToUserResponseDto(
                 userRepository.save(validUserEntity)
         );
 
@@ -59,7 +61,7 @@ public class AuthenticationService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findByEmail(username)
+        UserEntity userEntity = userRepository.findByEmailCaseInsensitive(username)
                 .orElseThrow( () -> new UsernameNotFoundException(String.format("User with email :%s not found or does not exist ", username)));
         return new SecurityUserAdapter(userEntity);
     }

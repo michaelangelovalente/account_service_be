@@ -22,7 +22,6 @@ public record UserRequestDto(
         String email,
 
         @NotBlank(message="Required field: password")
-
         String password
 ) implements BaseDto {
 }
