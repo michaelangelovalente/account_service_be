@@ -20,8 +20,8 @@ public class EmployeeController {
 
     @ApiOperation(value="Gives access to the signed in employee's payrolls.")
     @GetMapping("/payment")
-    public ResponseEntity<BaseDto> getEmployeePayroll() {
-        return ResponseEntity.ok(null);
+    public ResponseEntity<Object> getLoggedEmployeePayroll() {
+        return ResponseEntity.ok(authenticationService.findCurrentUser());
     }
 
 }

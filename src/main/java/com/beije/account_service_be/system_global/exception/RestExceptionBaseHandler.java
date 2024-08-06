@@ -13,12 +13,12 @@ import java.time.format.DateTimeFormatter;
 public class RestExceptionBaseHandler extends BaseExceptionHandler {
 
 
-    @ExceptionHandler({ GenericErrorCodeException.class })
+    @ExceptionHandler({GenericErrorCodeException.class})
     public ResponseEntity<InvalidResponseDto> handleGenericErrorCodeException(Exception ex, WebRequest request) {
         logger.error("handleGenericErrorCodeException", ex);
         GenericErrorCodeException exception = (GenericErrorCodeException) ex;
 
-        final InvalidResponseDto baseResponse =  InvalidResponseDto
+        final InvalidResponseDto baseResponse = InvalidResponseDto
                 .builder()
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
                 .status((long) exception.getHttpStatus().value())
@@ -28,31 +28,23 @@ public class RestExceptionBaseHandler extends BaseExceptionHandler {
         return ResponseEntity.status(exception.getHttpStatus()).body(baseResponse);
     }
 
-
-
-//    @ExceptionHandler({ Exception.class })
-//    public ResponseEntity<Object> handleDefaultException(Exception ex, WebRequest request) {
-//        logger.error("handleDefaultException", ex);
+//    @ExceptionHandler(AuthenticationException.class)
+//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+//    public ResponseEntity<GenericErrorResponseDto> handleBadCredentialsException(Exception ex, WebRequest request) {
+//        logger.error("handleBadCredentialsException", ex);
 //
-//        HttpStatus status = null;
-//        BaseResponse baseResponse = null;
-//
-//        try {
-//            String exStr = ex.getMessage();
-//            String statusCode = exStr.substring(exStr.lastIndexOf("{\"result\":{\"error\""), exStr.length()-1);
-//            baseResponse = new ObjectMapper().readValue(statusCode, BaseResponse.class);
-//            status = HttpStatus.BAD_REQUEST;
-//        } catch (Exception e) {
-//            baseResponse = new BaseResponse();
-//            baseResponse.getResult().setErrorCode(ErrorCodeExceptionEnum.ER001.name());
-//            baseResponse.getResult().setError(true);
-//            baseResponse.getResult().setErrorMessage(ex.getMessage());
-//            status = HttpStatus.INTERNAL_SERVER_ERROR;
-//        }
-//
-//
-//        return ResponseEntity.status(status).body(baseResponse);
+//        final GenericErrorResponseDto genericErrorResponseDto =
+//                GenericErrorResponseDto.builder()
+//                        .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
+//                        .status((long) HttpStatus.UNAUTHORIZED.value())
+//                        .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+//                        .message("")
+//                        .path(extractPathFromUri(request))
+//                        .build();
+//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                .body(genericErrorResponseDto);
 //    }
+
 
 
 }

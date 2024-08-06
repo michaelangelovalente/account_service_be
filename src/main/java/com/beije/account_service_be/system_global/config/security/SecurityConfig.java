@@ -25,43 +25,26 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
-                .csrf(AbstractHttpConfigurer::disable) // used for POSTMAN requests
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(restAuthenticationEntryPoint)) // used to handle authentication errors
-                .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable()) // For the H2 console
-                .headers(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests( auth -> auth // manage access
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/signup").permitAll() // NOTE: Spring Security RequestMatchers ignores app. properties server.servlet.context-path=/api
-                                .requestMatchers(HttpMethod.POST, "/error").permitAll()
-                        .anyRequest().authenticated()
+//                .httpBasic(Customizer.withDefaults())
+//                .exceptionHandling(ex -> ex.authenticationEntryPoint(restAuthenticationEntryPoint)) // Handle auth errors
+                .httpBasic( basic -> basic.authenticationEntryPoint(restAuthenticationEntryPoint))
+                .exceptionHandling(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable) // For Postman
+                .headers(headers ->  headers.frameOptions(Customizer.withDefaults()).disable()) // For the H2 console
+                .authorizeHttpRequests(auth -> auth  // manage access
+                                .requestMatchers("/h2-console/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/auth/signup").permitAll() // NOTE: Spring Security RequestMatchers ignores app. properties server.servlet.context-path=/api
+                                .requestMatchers("/error").permitAll()
+                                .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults())
-                .sessionManagement( sessions -> sessions
+                .sessionManagement(sessions -> sessions
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // no session
                 );
 
         return http.build();
     }
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .httpBasic(Customizer.withDefaults())
-//                .exceptionHandling(ex -> ex.authenticationEntryPoint(restAuthenticationEntryPoint)) // Handle auth errors
-//                .csrf(csrf -> csrf.disable()) // For Postman
-//                .headers(headers -> headers.frameOptions().disable()) // For the H2 console
-//                .authorizeHttpRequests(auth -> auth  // manage access
-//                                .requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
-//                                .anyRequest().authenticated()
-//                        // other matchers
-//                )
-//                .sessionManagement(sessions -> sessions
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // no session
-//                );
-//
-//        return http.build();
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

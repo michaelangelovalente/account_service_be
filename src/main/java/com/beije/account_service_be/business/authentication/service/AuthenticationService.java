@@ -6,6 +6,7 @@ import com.beije.account_service_be.business.authentication.domain.dto.response.
 import com.beije.account_service_be.business.authentication.domain.entity.UserEntity;
 import com.beije.account_service_be.business.authentication.repository.UserRepository;
 import com.beije.account_service_be.business.authentication.utils.AuthenticationMapper;
+import com.beije.account_service_be.system_global.config.security.AuthFacade;
 import com.beije.account_service_be.system_global.domain.dto.BaseDto;
 import com.beije.account_service_be.system_global.exception.ErrorCodeExceptionEnum;
 import com.beije.account_service_be.system_global.exception.GenericErrorCodeException;
@@ -20,6 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -33,27 +35,36 @@ public class AuthenticationService implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final AuthFacade authFacade;
+
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
-    public BaseDto signUp(UserRequestDto userRequestDto) throws UserExistsException {
-
-
-        return Optional.ofNullable(userRequestDto)
-                .map(UserRequestDto::email)
-                .flatMap(this::findUserByUsername)
-                .map(userEntity -> {
-                    var registeredUser = registerNewUser(userRequestDto);
-                    logger.info("User registration success: {}", registeredUser);
-                    return registeredUser;
-                })
-                .orElseThrow(() -> new GenericErrorCodeException(ErrorCodeExceptionEnum.ER003, "Empty Request"));
+    public Object findCurrentUser(){
+        var username = authFacade.getAuthContext().getName();
+        return findUserByUsername(username)
+                .map(authenticationMapper::userEntityToUserResponseDto);
     }
 
+    public BaseDto signUp(UserRequestDto userRequestDto) throws UserExistsException {
+
+        if(Objects.isNull(userRequestDto)){
+            throw new GenericErrorCodeException(ErrorCodeExceptionEnum.ER003, "Empty Request");
+        }
+        var userIsRegistered = Optional.of(userRequestDto)
+                .map(UserRequestDto::email)
+                .flatMap(this::findUserByUsername)
+                .isPresent();
+
+        if(userIsRegistered){
+            throw new UserExistsException();
+        }
 
 
-    public Optional<UserEntity> findUserByUsername(String username) {
-        return userRepository.findByEmailCaseInsensitive(username);
+
+        var registeredUser = registerNewUser(userRequestDto);
+        logger.info("User registration success: {}", registeredUser);
+        return registeredUser;
     }
 
     private UserResponseDto registerNewUser(UserRequestDto userRequestDto) {
@@ -66,12 +77,13 @@ public class AuthenticationService implements UserDetailsService {
                             return userRepository.save(user);
                         }
                 )
-                .map(userRepository::save)
                 .map(authenticationMapper::userEntityToUserResponseDto)
                 .orElseThrow(() -> new IllegalArgumentException("Error during user registration"));
-
     }
 
+    public Optional<UserEntity> findUserByUsername(String username) {
+        return userRepository.findByEmailCaseInsensitive(username);
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
