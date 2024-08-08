@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### h2
-/h2-database
+h2-database/
